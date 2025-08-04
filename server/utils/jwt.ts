@@ -1,4 +1,7 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+
+dotenv.config({path: '../.env'});
 
 
 export const generateAccessToken = (user) => {
@@ -16,13 +19,13 @@ export const generateRefreshToken = async (user, prisma) => {
     { expiresIn: '7d' }
   );
   // Store refresh token in database
-//   await prisma.refreshToken.create({
-//     data: {
-//       token: refreshToken,
-//       userId: user.id,
-//       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-//     }
-//   });
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    }
+  });
 
   return refreshToken;
 };

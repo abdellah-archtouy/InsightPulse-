@@ -4,6 +4,11 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { SignUp } from "./routes/signup";
 import SignIn from "./routes/signin";
+import { prisma } from "../prisma/Client";
+import dotenv from 'dotenv';
+
+dotenv.config({path: '../.env'});
+
 
 export function createServer() {
   const app = express();
@@ -17,6 +22,11 @@ export function createServer() {
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });
+  });
+
+  app.get("/api/users", async (_req, res) => {
+    const users = await prisma.user.findMany();
+    res.json(users);
   });
 
   app.post("/api/signup", SignUp);
