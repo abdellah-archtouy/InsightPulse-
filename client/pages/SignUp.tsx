@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Eye, EyeOff, LayoutDashboard, Mail, Lock, User, Building } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, LayoutDashboard, Mail, Lock, User, Building, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useCreateSignup } from "@/hooks";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +21,8 @@ export default function SignUp() {
     confirmPassword: "",
     agreeToTerms: false,
   });
+  const navigate = useNavigate()
+  const createsignup = useCreateSignup(); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +30,13 @@ export default function SignUp() {
       alert("Passwords don't match");
       return;
     }
-    // Handle sign up logic here
+    createsignup.mutate(formData,
+      {
+        onSuccess: () => {
+          navigate("/");
+        }
+      }
+    );
     console.log("Sign up:", formData);
   };
 

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LayoutDashboard, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useCreateSignin } from "@/hooks";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,11 +14,28 @@ export default function SignIn() {
     email: "",
     password: "",
   });
+  const createsignin = useCreateSignin();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle sign in logic here
-    console.log("Sign in:", formData);
+    createsignin.mutate(formData, {
+      onSuccess: (data) => {
+        console.log("Sign in successful:", data);
+        navigate("/"); 
+      },
+      onError: (error) => {
+        console.error("Sign in failed:", error);
+        // Show error message
+      }
+    });
+    // Reset form data
+    setFormData({
+      email: "",
+      password: "",
+    });
+    setShowPassword(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

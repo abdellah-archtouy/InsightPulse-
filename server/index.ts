@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { SignUp } from "./routes/signup";
+import SignIn from "./routes/signin";
 
 export function createServer() {
   const app = express();
@@ -17,6 +19,8 @@ export function createServer() {
     res.json({ message: ping });
   });
 
+  app.post("/api/signup", SignUp);
+  app.post("/api/signin", SignIn);
   app.get("/api/demo", handleDemo);
 
   return app;
