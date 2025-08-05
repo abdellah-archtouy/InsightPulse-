@@ -8,18 +8,18 @@ async function cookeiJwtAuth(req, res, next) {
     const refreshToken = req.cookies.refreshToken;
 
     if (!token && !refreshToken) {
-        return res.redirect('/auth/login');
+        return res.redirect('/signin');
     }
 
     try {
-        const user = await jwt.verify(token, process.env.MY_SECRET);
+        const user = await jwt.verify(token, process.env.JWT_SECRET);
         req.user = user;
         next();
     }
     catch (accessError) {
         if (accessError.name === 'TokenExpiredError' && refreshToken) {
             try {
-                const refreshUser = jwt.verify(refreshToken, process.env.MY_SECRET);
+                const refreshUser = jwt.verify(refreshToken, process.env.JWT_SECRET);
                 
                 const storedToken = await prisma.refreshToken.findUnique({
                     where: { token: refreshToken }
@@ -30,7 +30,7 @@ async function cookeiJwtAuth(req, res, next) {
                 }
                 const newAccessToken = jwt.sign(
                     { userId: refreshUser.userId },
-                    process.env.MY_SECRET,
+                    process.env.JWT_SECRET,
                     { expiresIn: '1m' }
                 );
                 res.cookie('token', newAccessToken, {
@@ -46,12 +46,12 @@ async function cookeiJwtAuth(req, res, next) {
                 console.log('Refresh token error:', refreshError);
                 res.clearCookie('token');
                 res.clearCookie('refreshToken');
-                return res.redirect('/auth/login');
+                return res.redirect('/signin');
             }
         } else {
             res.clearCookie('token');
             res.clearCookie('refreshToken');
-            return res.redirect('/auth/login');
+            return res.redirect('/signin');
         }
     }
 }

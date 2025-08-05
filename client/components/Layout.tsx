@@ -1,12 +1,16 @@
+// components/Layout.tsx
 import { ReactNode, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
+  const { isLoading } = useAuth();
+
   useEffect(() => {
     // Initialize theme on app load
     const savedTheme = localStorage.getItem("theme");
@@ -18,6 +22,18 @@ export function Layout({ children }: LayoutProps) {
       document.documentElement.classList.remove("dark");
     }
   }, []);
+
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

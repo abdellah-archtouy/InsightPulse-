@@ -18,7 +18,6 @@ export const generateRefreshToken = async (user, prisma) => {
     process.env.MY_SECRET,
     { expiresIn: '7d' }
   );
-  // Store refresh token in database
   await prisma.refreshToken.create({
     data: {
       token: refreshToken,
