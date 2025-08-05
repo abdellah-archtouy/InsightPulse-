@@ -6,6 +6,8 @@ import { SignUp } from "./routes/signup";
 import SignIn from "./routes/signin";
 import { prisma } from "../prisma/Client";
 import dotenv from 'dotenv';
+import cookeiJwtAuth from "./middleware/cookieJwtAuth";
+import cookieParser from "cookie-parser";
 
 dotenv.config({path: '../.env'});
 
@@ -16,6 +18,7 @@ export function createServer() {
   // Middleware
   app.use(cors());
   app.use(express.json());
+  app.use(cookieParser());
   app.use(express.urlencoded({ extended: true }));
 
   // Example API routes
@@ -24,7 +27,7 @@ export function createServer() {
     res.json({ message: ping });
   });
 
-  app.get("/api/users", async (_req, res) => {
+  app.get("/api/users", cookeiJwtAuth, async (_req, res) => {
     const users = await prisma.user.findMany();
     res.json(users);
   });

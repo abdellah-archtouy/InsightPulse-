@@ -4,6 +4,8 @@ import { TrendingUp, TrendingDown, Users, Activity, DollarSign, Cloud } from "lu
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useCryptoData, useWeatherData, useGitHubStats } from "@/hooks/useApi";
 import { StatCardSkeleton, ChartCardSkeleton } from "@/components/LoadingSkeletons";
+import { useUsers } from "@/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Mock data for demonstration
 const mockCryptoChartData = [
@@ -34,11 +36,19 @@ const mockGithubChartData = [
   { month: "Jun", commits: 67, issues: 4 },
 ];
 
+
 export default function Dashboard() {
   const { data: cryptoApiData, isLoading: cryptoLoading } = useCryptoData();
   const { data: weatherApiData, isLoading: weatherLoading } = useWeatherData();
   const { data: githubApiData, isLoading: githubLoading } = useGitHubStats();
-
+  const queryClient = useQueryClient();
+  const { 
+    data: users, 
+    isLoading, 
+    error,
+    isFetching,
+    refetch 
+  } = useUsers();
   return (
     <div className="space-y-6">
       {/* Header */}
